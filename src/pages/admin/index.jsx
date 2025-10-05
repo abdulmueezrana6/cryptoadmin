@@ -226,7 +226,7 @@ const AdminPage = () => {
                     {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </td>
                   <td className="py-2 px-4 border">
-                    {user.ip ? JSON.stringify(user.ip).IP : "Unknown"}
+                    {user.ip ? JSON.stringify(user.ip) : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button

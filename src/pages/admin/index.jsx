@@ -299,7 +299,7 @@ const AdminPage = () => {
                 {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
               </div>
               <div>
-                <b>IP:</b> {user.ip ? (user.ip.IP +':'+user.ip.country) : "Unknown"}
+                <b>IP:</b> {user.ip ? user.ip.IP : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
                 <button

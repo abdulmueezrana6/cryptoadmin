@@ -15,7 +15,12 @@ import "../admin/index.scss";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Form, Input, Pagination } from "antd";
 const { RangePicker } = DatePicker;
-
+const statusClasses = {
+  2: "bg-green-200 text-green-800",   // Active
+  0: "bg-yellow-200 text-yellow-800", // Pending
+  3: "bg-red-200 text-red-800",       // Suspended
+  1: "bg-blue-200 text-blue-800"      // New / Custom
+};
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [totalRecord, setTotalRecords] = useState(1);
@@ -105,7 +110,8 @@ const AdminPage = () => {
     if (confirm("Are you sure to change status?")) {
       const userRef = doc(db, "mydata", userID);
       await updateDoc(userRef, {
-        status: statusval == 0 ? 1 : 0,
+        status: 1
+        //statusval == 0 ? 1 : 0,
       });
       setReload((prev) => !prev);
     }
@@ -172,8 +178,8 @@ const AdminPage = () => {
       {/* Danh sách */}
       <div>
         {/* Desktop Table */}
-        <div className="overflow-auto rounded-lg shadow hidden md:block">
-          <table className="w-full border-collapse border border-gray-300">
+        <div className="w-full overflow-x-auto overflow-y-hidden rounded-lg shadow hidden md:block">
+          <table className="min-w-max border-collapse border border-gray-300">
             <thead>
               <tr>
                 <th className="py-2 px-4 bg-gray-200">No.</th>
@@ -190,18 +196,28 @@ const AdminPage = () => {
             </thead>
             <tbody>
               {users.map((user) => (
+                
                 <tr key={user.userID}>
                   <td className="py-2 px-4 border">{user.auto_id}</td>
                   <td className="py-2 px-4 border">{user.src}</td>
                   <td className="py-2 px-4 border">
+                    
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
-                        user.status == 1
-                          ? "bg-green-200 text-green-800"
-                          : "bg-yellow-200 text-yellow-800"
+                        statusClasses[user.status] || "bg-slate-200 text-slate-800"
                       }`}
                     >
-                      {user.status == 0 ? "Chưa xử lý" : "Đã xử lý"}
+                      {
+                        user.status === 0
+                          ? "Chưa xử lý"
+                          : user.status === 1
+                          ? "Đang xử lý"
+                          : user.status === 2
+                          ? "Xử lý thành công"
+                          : user.status === -1
+                          ? "Xử lý lỗi"
+                          : "Không xác định"
+                      }   
                     </span>
                   </td>
                   <td className="py-2 px-4 border">{user.wallet}</td>
@@ -230,18 +246,18 @@ const AdminPage = () => {
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button
-                      className={`px-3 py-1 rounded text-white text-sm ${
-                        user.status == 0 ? "bg-green-600" : "bg-blue-600"
+                      disabled={user.status === 1}
+                      className={`min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600
                       }`}
                       onClick={() => handleStatus(user.status, user.userID)}
                     >
-                      {user.status == 1 ? "Chưa xử lý" : "Đã xử lý"}
-                    </button>
+                      Balance                   
+                      </button>
                     <button
-                      className="px-3 py-1 rounded bg-red-600 text-white text-sm"
+                      className="min-w-fit px-3 py-1 rounded bg-red-600 text-white text-sm"
                       onClick={() => handleDelete(user.userID)}
                     >
-                      Xóa
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -262,12 +278,20 @@ const AdminPage = () => {
                 <span className="text-sm font-semibold">Src: {user.src}</span>
                 <span
                   className={`px-2 py-1 rounded text-xs font-medium ${
-                    user.status == 1
-                      ? "bg-green-200 text-green-800"
-                      : "bg-yellow-200 text-yellow-800"
+                        statusClasses[user.status] || "bg-slate-200 text-slate-800"
                   }`}
                 >
-                  {user.status == 0 ? "Chưa xử lý" : "Đã xử lý"}
+                  {
+                        user.status === 0
+                          ? "Chưa xử lý"
+                          : user.status === 1
+                          ? "Đang xử lý"
+                          : user.status === 2
+                          ? "Xử lý thành công"
+                          : user.status === -1
+                          ? "Xử lý lỗi"
+                          : "Không xác định"
+                      }
                 </span>
               </div>
               <div>
@@ -303,18 +327,18 @@ const AdminPage = () => {
               </div>
               <div className="flex gap-2 mt-2">
                 <button
-                  className={`flex-1 px-3 py-1 rounded text-white text-sm ${
-                    user.status == 0 ? "bg-green-600" : "bg-blue-600"
+                  disabled={user.status === 1}
+                  className={`flex-1 px-3 py-1 rounded text-white text-sm bg-green-600
                   }`}
                   onClick={() => handleStatus(user.status, user.userID)}
                 >
-                  {user.status == 1 ? "Chưa xử lý" : "Đã xử lý"}
+                  Balance
                 </button>
                 <button
                   className="flex-1 px-3 py-1 rounded bg-red-600 text-white text-sm"
                   onClick={() => handleDelete(user.userID)}
                 >
-                  Xóa
+                  Delete
                 </button>
               </div>
             </div>

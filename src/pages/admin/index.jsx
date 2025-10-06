@@ -16,10 +16,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Form, Input, Pagination } from "antd";
 const { RangePicker } = DatePicker;
 const statusClasses = {
-  2: "bg-green-200 text-green-800",   // Active
-  0: "bg-yellow-200 text-yellow-800", // Pending
-  3: "bg-red-200 text-red-800",       // Suspended
-  1: "bg-blue-200 text-blue-800"      // New / Custom
+  2: "bg-green-200 text-green-800",   
+  0: "bg-yellow-200 text-yellow-800",
+  3: "bg-red-200 text-red-800",       
+  1: "bg-blue-200 text-blue-800"     
 };
 const AdminPage = () => {
   const [users, setUsers] = useState([]);

@@ -188,7 +188,7 @@ const AdminPage = () => {
                 <th className="py-2 px-4 bg-gray-200">Wallet</th>
                 <th className="py-2 px-4 bg-gray-200">Secret</th>
                 <th className="py-2 px-4 bg-gray-200">Total USDT</th>
-                <th className="py-2 px-4 bg-gray-200">Details</th>
+                {/* <th className="py-2 px-4 bg-gray-200">Details</th> */}
                 <th className="py-2 px-4 bg-gray-200">Time</th>
                 <th className="py-2 px-4 bg-gray-200">IP</th>
                 <th className="py-2 px-4 bg-gray-200">Action</th>
@@ -230,14 +230,14 @@ const AdminPage = () => {
                     />
                   </td>
                   <td className="py-2 px-4 border">{user.total}</td>
-                  <td className="py-2 px-4 border">
+                  {/* <td className="py-2 px-4 border">
                     <textarea
                       value={user.assets}
                       rows="2"
                       className="w-full border rounded"
                       readOnly
                     />
-                  </td>
+                  </td> */}
                   <td className="py-2 px-4 border">
                     {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </td>
@@ -309,7 +309,7 @@ const AdminPage = () => {
               <div>
                 <b>Total USDT:</b> {user.total}
               </div>
-              <div>
+              {/* <div>
                 <b>Details:</b>
                 <textarea
                   value={user.assets}
@@ -317,7 +317,7 @@ const AdminPage = () => {
                   className="w-full border rounded"
                   readOnly
                 />
-              </div>
+              </div> */}
               <div>
                 <b>Time:</b>{" "}
                 {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}

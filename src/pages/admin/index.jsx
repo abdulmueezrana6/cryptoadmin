@@ -32,7 +32,7 @@ const AdminPage = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [reload, setReload] = useState(false);
   const [filter, setFilter] = useState({});
-
+  /*
   useEffect(() => {
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const userList = querySnapshot.docs.map((doc) => ({
@@ -48,6 +48,7 @@ const AdminPage = () => {
     });
     return () => unsubscribe();
   }, []);
+  */
 
   useEffect(() => {
     const isMuted = localStorage.getItem("isMuted");

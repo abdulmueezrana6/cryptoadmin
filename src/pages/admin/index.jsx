@@ -238,7 +238,7 @@ const AdminPage = () => {
                     {user.ip ? user.ip.IP : "Unknown"}
                   </td>
                     <td className="py-2 px-4 border">
-                    {user.ip ? user.ip.country_code : "Unknown"}
+                    {user.ip ? user.ip.country : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button

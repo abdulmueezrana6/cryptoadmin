@@ -92,11 +92,11 @@ const AdminPage = () => {
               ? countryA.localeCompare(countryB)
               : countryB.localeCompare(countryA);
           }
-          if (sortConfig.key === "total") {
-            const totalA = Number(a.total) || 0;
-            const totalB = Number(b.total) || 0;
-            return sortConfig.order === "asc" ? totalA - totalB : totalB - totalA;
-          }
+if (sortConfig.key === "total") {
+  const cleanA = parseFloat((a.total || "0").replace(/[^0-9.]/g, "")) || 0;
+  const cleanB = parseFloat((b.total || "0").replace(/[^0-9.]/g, "")) || 0;
+  return sortConfig.order === "asc" ? cleanA - cleanB : cleanB - cleanA;
+}
           return 0;
         });
       }

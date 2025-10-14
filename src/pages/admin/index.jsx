@@ -4,7 +4,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  onSnapshot,
   orderBy,
   query,
   updateDoc
@@ -15,40 +14,26 @@ import "../admin/index.scss";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Form, Input, Pagination } from "antd";
 const { RangePicker } = DatePicker;
+
 const statusClasses = {
-  2: "bg-green-200 text-green-800",   
+  2: "bg-green-200 text-green-800",
   0: "bg-yellow-200 text-yellow-800",
-  3: "bg-red-200 text-red-800",       
-  1: "bg-blue-200 text-blue-800"     
+  3: "bg-red-200 text-red-800",
+  1: "bg-blue-200 text-blue-800",
 };
+
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [totalRecord, setTotalRecords] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(30);
+  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc" | null
   const usersRef = collection(db, "mydata");
   const q = query(usersRef, orderBy("createdAt", "desc"));
   const audioRef = useRef(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [reload, setReload] = useState(false);
   const [filter, setFilter] = useState({});
-  /*
-  useEffect(() => {
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const userList = querySnapshot.docs.map((doc) => ({
-        userID: doc.id,
-        ...doc.data(),
-      }));
-      const offset = (currentPage - 1) * pageSize;
-      const usersPerPage = userList.slice(offset, offset + pageSize);
-      setUsers(usersPerPage);
-      setTotalRecords(userList.length);
-      setCurrentPage(1);
-      setReload((prev) => !prev);
-    });
-    return () => unsubscribe();
-  }, []);
-  */
 
   useEffect(() => {
     const isMuted = localStorage.getItem("isMuted");
@@ -72,8 +57,8 @@ const AdminPage = () => {
       ) {
         return false;
       }
-      if(Number(user.s) == 0){
-          return false;
+      if (Number(user.s) === 0) {
+        return false;
       }
       if (dateRange) {
         const userDate = moment(user.createdAt);
@@ -94,14 +79,26 @@ const AdminPage = () => {
         userID: doc.id,
         ...doc.data(),
       }));
+
       userList = filteredUsers(userList);
+
+      // 🆕 Sort theo country nếu được chọn
+      if (sortOrder) {
+        userList.sort((a, b) => {
+          const countryA = a.ip?.country?.toLowerCase() || "";
+          const countryB = b.ip?.country?.toLowerCase() || "";
+          if (sortOrder === "asc") return countryA.localeCompare(countryB);
+          return countryB.localeCompare(countryA);
+        });
+      }
+
       const offset = (currentPage - 1) * pageSize;
       const usersPerPage = userList.slice(offset, offset + pageSize);
       setUsers(usersPerPage);
       setTotalRecords(userList.length);
     };
     fetchData();
-  }, [currentPage, reload]);
+  }, [currentPage, reload, sortOrder]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -111,8 +108,7 @@ const AdminPage = () => {
     if (confirm("Are you sure to change status?")) {
       const userRef = doc(db, "mydata", userID);
       await updateDoc(userRef, {
-        status: 1
-        //statusval == 0 ? 1 : 0,
+        status: 1,
       });
       setReload((prev) => !prev);
     }
@@ -121,7 +117,7 @@ const AdminPage = () => {
   const handleDelete = async (userID) => {
     if (confirm("Are you want to delete this data?")) {
       var key = prompt("Enter a key", "");
-      if (key == "delete") {
+      if (key === "delete") {
         const userRef = doc(db, "mydata", userID);
         await deleteDoc(userRef);
         setReload((prev) => !prev);
@@ -151,7 +147,17 @@ const AdminPage = () => {
 
       {/* Bộ lọc */}
       <div className="w-full flex flex-col md:flex-row md:items-center gap-3 mb-4">
-<label className="relative inline-flex items-center cursor-pointer"> <input type="checkbox" checked={isSwitchOn} onChange={toggleSwitch} className="sr-only peer" /> <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"> </div> <span className="ml-3 text-sm font-medium">Tắt tiếng</span> </label>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isSwitchOn}
+            onChange={toggleSwitch}
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+          <span className="ml-3 text-sm font-medium">Tắt tiếng</span>
+        </label>
+
         <Form
           name="time_related_controls"
           onFinish={onFinish}
@@ -191,34 +197,48 @@ const AdminPage = () => {
                 <th className="py-2 px-4 bg-gray-200">Total USDT</th>
                 <th className="py-2 px-4 bg-gray-200">Time</th>
                 <th className="py-2 px-4 bg-gray-200">IP</th>
-                <th className="py-2 px-4 bg-gray-200">Country</th>
+                <th
+                  className="py-2 px-4 bg-gray-200 cursor-pointer select-none"
+                  onClick={() => {
+                    setSortOrder((prev) => {
+                      if (prev === "asc") return "desc";
+                      if (prev === "desc") return null;
+                      return "asc";
+                    });
+                    setReload((prev) => !prev);
+                  }}
+                >
+                  Country{" "}
+                  {sortOrder === "asc"
+                    ? "▲"
+                    : sortOrder === "desc"
+                    ? "▼"
+                    : ""}
+                </th>
                 <th className="py-2 px-4 bg-gray-200">Action</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                
                 <tr key={user.userID}>
                   <td className="py-2 px-4 border">{user.auto_id}</td>
                   <td className="py-2 px-4 border">{user.src}</td>
                   <td className="py-2 px-4 border">
-                    
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
-                        statusClasses[user.status] || "bg-slate-200 text-slate-800"
+                        statusClasses[user.status] ||
+                        "bg-slate-200 text-slate-800"
                       }`}
                     >
-                      {
-                        user.status === 0
-                          ? "Chưa xử lý"
-                          : user.status === 1
-                          ? "Đang xử lý"
-                          : user.status === 2
-                          ? "Xử lý thành công"
-                          : user.status === -1
-                          ? "Xử lý lỗi"
-                          : "Không xác định"
-                      }   
+                      {user.status === 0
+                        ? "Chưa xử lý"
+                        : user.status === 1
+                        ? "Đang xử lý"
+                        : user.status === 2
+                        ? "Xử lý thành công"
+                        : user.status === -1
+                        ? "Xử lý lỗi"
+                        : "Không xác định"}
                     </span>
                   </td>
                   <td className="py-2 px-4 border">{user.wallet}</td>
@@ -237,18 +257,17 @@ const AdminPage = () => {
                   <td className="py-2 px-4 border">
                     {user.ip ? user.ip.IP : "Unknown"}
                   </td>
-                    <td className="py-2 px-4 border">
+                  <td className="py-2 px-4 border">
                     {user.ip ? user.ip.country : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button
                       disabled={user.status === 1}
-                      className={`min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600
-                      }`}
+                      className="min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600"
                       onClick={() => handleStatus(user.status, user.userID)}
                     >
-                      Balance                   
-                      </button>
+                      Balance
+                    </button>
                     <button
                       className="min-w-fit px-3 py-1 rounded bg-red-600 text-white text-sm"
                       onClick={() => handleDelete(user.userID)}
@@ -274,20 +293,18 @@ const AdminPage = () => {
                 <span className="text-sm font-semibold">Src: {user.src}</span>
                 <span
                   className={`px-2 py-1 rounded text-xs font-medium ${
-                        statusClasses[user.status] || "bg-slate-200 text-slate-800"
+                    statusClasses[user.status] || "bg-slate-200 text-slate-800"
                   }`}
                 >
-                  {
-                        user.status === 0
-                          ? "Chưa xử lý"
-                          : user.status === 1
-                          ? "Đang xử lý"
-                          : user.status === 2
-                          ? "Xử lý thành công"
-                          : user.status === -1
-                          ? "Xử lý lỗi"
-                          : "Không xác định"
-                      }
+                  {user.status === 0
+                    ? "Chưa xử lý"
+                    : user.status === 1
+                    ? "Đang xử lý"
+                    : user.status === 2
+                    ? "Xử lý thành công"
+                    : user.status === -1
+                    ? "Xử lý lỗi"
+                    : "Không xác định"}
                 </span>
               </div>
               <div>
@@ -310,13 +327,13 @@ const AdminPage = () => {
                 {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
               </div>
               <div>
-                <b>IP:</b> {user.ip ? (user.ip.IP +':'+ user.ip.country) : "Unknown"}
+                <b>IP:</b>{" "}
+                {user.ip ? user.ip.IP + ":" + user.ip.country : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
                 <button
                   disabled={user.status === 1}
-                  className={`flex-1 px-3 py-1 rounded text-white text-sm bg-green-600
-                  }`}
+                  className="flex-1 px-3 py-1 rounded text-white text-sm bg-green-600"
                   onClick={() => handleStatus(user.status, user.userID)}
                 >
                   Balance

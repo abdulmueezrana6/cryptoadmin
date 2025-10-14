@@ -82,6 +82,7 @@ const AdminPage = () => {
 
       userList = filteredUsers(userList);
 
+      // ✅ Sort logic
       if (sortConfig.key) {
         userList.sort((a, b) => {
           if (sortConfig.key === "country") {
@@ -201,31 +202,48 @@ const AdminPage = () => {
         </Form>
       </div>
 
-      {/* Sort Dropdown cho Mobile */}
-      <div className="flex gap-2 mb-4 md:hidden">
+      {/* ✅ Sort 2 chiều cho Mobile */}
+      <div className="flex flex-wrap gap-2 mb-4 md:hidden items-center">
         <select
           value={sortConfig.key || ""}
           onChange={(e) => {
             const key = e.target.value;
-            if (!key) {
-              setSortConfig({ key: null, order: null });
-            } else {
-              setSortConfig((prev) => ({
-                key,
-                order: prev.key === key && prev.order === "asc" ? "desc" : "asc",
-              }));
-            }
+            setSortConfig({ key, order: sortConfig.order || "asc" });
             setReload((prev) => !prev);
           }}
           className="px-3 py-1 rounded border"
         >
-          <option value="">-- Sort Mobile --</option>
+          <option value="">-- Cột sắp xếp --</option>
           <option value="country">Country</option>
           <option value="total">Total USDT</option>
         </select>
+
+        <select
+          value={sortConfig.order || ""}
+          onChange={(e) => {
+            const order = e.target.value;
+            setSortConfig((prev) => ({ ...prev, order }));
+            setReload((prev) => !prev);
+          }}
+          className="px-3 py-1 rounded border"
+        >
+          <option value="">-- Hướng sắp xếp --</option>
+          <option value="asc">Tăng dần</option>
+          <option value="desc">Giảm dần</option>
+        </select>
+
+        <Button
+          onClick={() => {
+            setSortConfig({ key: null, order: null });
+            setReload((prev) => !prev);
+          }}
+        >
+          Reset
+        </Button>
+
         {sortConfig.key && (
           <span className="px-2 py-1 bg-gray-200 rounded text-sm">
-            {sortConfig.key} {sortConfig.order === "asc" ? "▲" : "▼"}
+            {sortConfig.key} ({sortConfig.order === "asc" ? "↑" : "↓"})
           </span>
         )}
       </div>
@@ -377,12 +395,10 @@ const AdminPage = () => {
                 {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
               </div>
               <div>
-                <b>IP:</b>{" "}
-                {user.ip ? user.ip.IP : "Unknown"}
+                <b>IP:</b> {user.ip ? user.ip.IP : "Unknown"}
               </div>
               <div>
-                <b>Country:</b>{" "}
-                {user.ip ? user.ip.country : "Unknown"}
+                <b>Country:</b> {user.ip ? user.ip.country : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
                 <button

@@ -57,9 +57,6 @@ const AdminPage = () => {
       ) {
         return false;
       }
-      if (Number(user.s) === 0) {
-        return false;
-      }
       if (dateRange) {
         const userDate = moment(user.createdAt);
         const startDate = moment(dateRange[0], "YYYY-MM-DD");

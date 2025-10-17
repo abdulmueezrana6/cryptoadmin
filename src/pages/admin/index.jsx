@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   collection,
   deleteDoc,
@@ -23,6 +25,7 @@ const statusClasses = {
 };
 
 const AdminPage = () => {
+    const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [totalRecord, setTotalRecords] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
@@ -196,6 +199,18 @@ const AdminPage = () => {
               Tìm kiếm
             </Button>
           </Form.Item>
+                    <Form.Item>
+  <Button
+    type="success"
+    className="bg-green-600 text-white"
+    onClick={(e) => {
+         e.preventDefault();
+         navigate("/admin/stats");
+    }}
+  >
+    Thống kê
+  </Button>
+</Form.Item>
         </Form>
       </div>
 

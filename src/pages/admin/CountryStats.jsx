@@ -28,9 +28,23 @@ export default function CountryStats() {
       }
 
       // Làm sạch và kiểm tra giá trị total
-      const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");
-      const value = parseFloat(rawValue);
-      if (isNaN(value)) return;
+      // const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");
+      // const value = parseFloat(rawValue);
+      // if (isNaN(value)) return;
+      let value = 0;
+
+      const total = data?.total;
+
+      // Nếu đã là số, dùng trực tiếp
+      if (typeof total === "number") {
+        value = total;
+      }
+      // Nếu là chuỗi, làm sạch rồi parse
+      else if (typeof total === "string") {
+        const rawValue = total.replace(/[^0-9.\-]/g, ""); // loại ký tự không hợp lệ
+        const parsed = parseFloat(rawValue);
+        value = isNaN(parsed) ? 0 : parsed;
+      }
 
       if (!stats.has(country)) {
         stats.set(country, { country, total: 0, count: 0 });

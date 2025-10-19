@@ -15,8 +15,10 @@ export default function CountryStats() {
     const snapshot = await getDocs(q);
 
     const stats = new Map();
-
+    var idx = 0;
     snapshot.forEach((doc) => {
+      idx++;
+      console.log(idx);
       const data = doc.data();
 
       // Gộp mọi trường hợp thiếu country hoặc ip rỗng vào "Unknown"

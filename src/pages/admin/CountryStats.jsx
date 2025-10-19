@@ -13,12 +13,8 @@ export default function CountryStats() {
   try {
     const q = query(collection(db, "mydata"));
     const snapshot = await getDocs(q);
-
     const stats = new Map();
-    var idx = 0;
     snapshot.forEach((doc) => {
-      idx++;
-      console.log(idx);
       const data = doc.data();
 
       // Gộp mọi trường hợp thiếu country hoặc ip rỗng vào "Unknown"
@@ -26,11 +22,7 @@ export default function CountryStats() {
       if (data?.ip && typeof data.ip === "object" && data.ip.country) {
         country = data.ip.country;
       }
-
-      // Làm sạch và kiểm tra giá trị total
-      // const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");
-      // const value = parseFloat(rawValue);
-      // if (isNaN(value)) return;
+      
       let value = 0;
 
       const total = data?.total;
@@ -89,7 +81,7 @@ export default function CountryStats() {
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-50 p-8">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-6">
+      <div className="w-full bg-white rounded-2xl shadow-lg p-6">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
           📊 Bảng thống kê theo quốc gia
         </h2>

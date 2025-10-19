@@ -9,41 +9,48 @@ export default function CountryStats() {
 
   // 🔹 Lấy toàn bộ dữ liệu từ Firestore và tổng hợp theo quốc gia
   const fetchAllData = async () => {
-    setLoading(true);
-    try {
-      const q = query(collection(db, "mydata"));
-      const snapshot = await getDocs(q);
+  setLoading(true);
+  try {
+    const q = query(collection(db, "mydata"));
+    const snapshot = await getDocs(q);
 
-      const stats = new Map();
+    const stats = new Map();
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const country = data?.ip?.country || "Unknown";
-        const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");
-        const value = parseFloat(rawValue);
-        if (isNaN(value)) return;
+    snapshot.forEach((doc) => {
+      const data = doc.data();
 
-        if (!stats.has(country)) {
-          stats.set(country, { country, total: 0, count: 0 });
-        }
+      // Kiểm tra xem data.ip có phải là object và có country không
+      const country = (data?.ip && typeof data.ip === "object" && data.ip.country) 
+        ? data.ip.country 
+        : "Unknown";
 
-        const c = stats.get(country);
-        c.total += value;
-        c.count += 1;
-      });
+      // Làm sạch và kiểm tra giá trị total
+      const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");
+      const value = parseFloat(rawValue);
+      if (isNaN(value)) return;
 
-      const result = Array.from(stats.values()).sort((a, b) => {
-        if (b.total === a.total) return b.count - a.count;
-        return b.total - a.total;
-      });
+      if (!stats.has(country)) {
+        stats.set(country, { country, total: 0, count: 0 });
+      }
 
-      setCountriesData(result);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      const c = stats.get(country);
+      c.total += value;
+      c.count += 1;
+    });
+
+    const result = Array.from(stats.values()).sort((a, b) => {
+      if (b.total === a.total) return b.count - a.count;
+      return b.total - a.total;
+    });
+
+    setCountriesData(result);
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchAllData();

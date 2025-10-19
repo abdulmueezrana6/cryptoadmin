@@ -19,10 +19,11 @@ export default function CountryStats() {
     snapshot.forEach((doc) => {
       const data = doc.data();
 
-      // Kiểm tra xem data.ip có phải là object và có country không
-      const country = (data?.ip && typeof data.ip === "object" && data.ip.country) 
-        ? data.ip.country 
-        : "Unknown";
+      // Gộp mọi trường hợp thiếu country hoặc ip rỗng vào "Unknown"
+      let country = "Unknown";
+      if (data?.ip && typeof data.ip === "object" && data.ip.country) {
+        country = data.ip.country;
+      }
 
       // Làm sạch và kiểm tra giá trị total
       const rawValue = String(data?.total || "").replace(/[^0-9.\-]/g, "");

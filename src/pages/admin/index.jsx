@@ -341,9 +341,7 @@ const AdminPage = () => {
                     {user.ip ? user.ip.country : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
-                    <button
-                      {/* disabled={user.status === 1} */}
-                      className="min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600"
+                    <button className="min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600"
                       onClick={() => handleStatus(user.status, user.userID)}
                     >
                       Balance
@@ -413,9 +411,7 @@ const AdminPage = () => {
                 <b>Country:</b> {user.ip ? user.ip.country : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
-                <button
-                  {/* disabled={user.status === 1} */}
-                  className="flex-1 px-3 py-1 rounded text-white text-sm bg-green-600"
+                <button className="flex-1 px-3 py-1 rounded text-white text-sm bg-green-600"
                   onClick={() => handleStatus(user.status, user.userID)}
                 >
                   Balance

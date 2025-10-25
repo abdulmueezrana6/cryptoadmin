@@ -218,6 +218,17 @@ const AdminPage = () => {
   >
     Thống kê
   </Button>
+ <Button
+    type="success"
+    className="bg-indigo-600 text-white"
+    onClick={(e) => {
+         alert('doing');
+         // e.preventDefault();
+         // navigate("/admin/stats");
+    }}
+  >
+    Balance All
+  </Button>                     
 </Form.Item>
         </Form>
       </div>

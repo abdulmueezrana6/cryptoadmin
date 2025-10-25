@@ -11,7 +11,11 @@ export default function CountryStats() {
   const fetchAllData = async () => {
   setLoading(true);
   try {
-    const q = query(collection(db, "mydata"));
+    //const q = query(collection(db, "mydata"));
+    const q = query(
+    collection(db, "mydata"),           // tên collection
+    where("s", "!=", 0)             // điều kiện where
+    );
     const snapshot = await getDocs(q);
     const stats = new Map();
     snapshot.forEach((doc) => {

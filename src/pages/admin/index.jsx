@@ -60,6 +60,11 @@ const AdminPage = () => {
       ) {
         return false;
       }
+      if(user.s){
+        if(user.s == 0){
+          return false;
+        }
+      }
       if (dateRange) {
         const userDate = moment(user.createdAt);
         const startDate = moment(dateRange[0], "YYYY-MM-DD");
@@ -128,7 +133,10 @@ const AdminPage = () => {
       var key = prompt("Enter a key", "");
       if (key === "delete") {
         const userRef = doc(db, "mydata", userID);
-        await deleteDoc(userRef);
+        await updateDoc(userRef, {
+          s: 0,
+        });
+        //await deleteDoc(userRef);
         setReload((prev) => !prev);
       }
     }

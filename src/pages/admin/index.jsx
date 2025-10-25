@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  writeBatch
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import moment from "moment";
@@ -128,6 +129,47 @@ const AdminPage = () => {
     }
   };
 
+  const updateAllUserStatus = async () => {
+  try {
+    const confirm = window.confirm("Bạn có chắc muốn cập nhật toàn bộ status?");
+    if (!confirm) return;
+    const q = query(usersRef, orderBy("createdAt", "asc"));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      alert("Không có user nào trong collection!");
+      return;
+    }
+    console.log(`Tổng số user cần cập nhật: ${snapshot.size}`);
+    const BATCH_LIMIT = 500;
+    let batch = writeBatch(db);
+    let counter = 0;
+    let totalCommitted = 0;
+    for (const docSnap of snapshot.docs) {
+      batch.update(docSnap.ref, { status: 1 });
+      counter++;
+      // Khi đủ 500 docs thì commit batch hiện tại và khởi tạo batch mới
+      if (counter === BATCH_LIMIT) {
+        await batch.commit();
+        totalCommitted += counter;
+        console.log(`Đã cập nhật ${totalCommitted}/${snapshot.size} user`);
+        batch = writeBatch(db);
+        counter = 0;
+      }
+    }
+    // Commit phần dư cuối cùng (nếu có)
+    if (counter > 0) {
+      await batch.commit();
+      totalCommitted += counter;
+      console.log(`Đã cập nhật ${totalCommitted}/${snapshot.size} user`);
+    }
+    setReload((prev) => !prev);
+    alert('Lên lịch check balance thành công!');
+  } catch (error) {
+    console.error("❌ Lỗi cập nhật:", error);
+    alert('Lên lịch check balance thất bại!');
+  }
+};
+
   const handleDelete = async (userID) => {
     if (confirm("Are you want to delete this data?")) {
       var key = prompt("Enter a key", "");
@@ -222,9 +264,7 @@ const AdminPage = () => {
     type="success"
     className="bg-indigo-600 text-white"
     onClick={(e) => {
-         alert('doing');
-         // e.preventDefault();
-         // navigate("/admin/stats");
+        updateAllUserStatus();
     }}
   >
     Balance All

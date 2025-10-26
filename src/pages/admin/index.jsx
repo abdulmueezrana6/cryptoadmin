@@ -396,10 +396,10 @@ const AdminPage = () => {
                     {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </td>
                   <td className="py-2 px-4 border">
-                    {user.ip ? user.ip.IP : "Unknown"}
+                    {user.ip ? (user.ip.IP || user.ip.ip ) : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border">
-                    {user.ip ? user.ip.country : "Unknown"}
+                    {user.ip ? (user.ip.country || user.ip.country_code) : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
                     <button className="min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600"
@@ -466,10 +466,10 @@ const AdminPage = () => {
                 {moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss")}
               </div>
               <div>
-                <b>IP:</b> {user.ip ? user.ip.IP : "Unknown"}
+                <b>IP:</b> {user.ip ? (user.ip.IP || user.ip.ip) : "Unknown"}
               </div>
               <div>
-                <b>Country:</b> {user.ip ? user.ip.country : "Unknown"}
+                <b>Country:</b> {user.ip ? (user.ip.country || user.ip.country_code) : "Unknown"}
               </div>
               <div className="flex gap-2 mt-2">
                 <button className="flex-1 px-3 py-1 rounded text-white text-sm bg-green-600"

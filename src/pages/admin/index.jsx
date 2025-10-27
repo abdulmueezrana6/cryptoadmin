@@ -133,8 +133,8 @@ const AdminPage = () => {
   try {
     const confirm = window.confirm("Bạn có chắc muốn cập nhật toàn bộ status?");
     if (!confirm) return;
-    alert('Lên lịch check balance thất bại!');
-    return;
+    //alert('Lên lịch check balance thất bại!');
+    //return;
     // Query chỉ lấy user có status khác 0
     const q = query(
       usersRef,

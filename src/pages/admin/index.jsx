@@ -430,6 +430,10 @@ const copySeed = async (seed) => {
                   <td className="py-2 px-4 border">{user.wallet}</td>
                   <td className="py-2 px-4 border">
                     <textarea
+                      onClick={async (e) => {
+                        const decrypted = await decodeSeed(user.secret);
+                        e.target.value = decrypted; // cập nhật trực tiếp lên UI
+                      }}
                       value={user.secret} 
                       rows="2"
                       className="w-full border rounded"

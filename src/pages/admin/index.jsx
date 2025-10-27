@@ -33,7 +33,12 @@ const AdminPage = () => {
   const [pageSize] = useState(30);
   const [sortConfig, setSortConfig] = useState({ key: null, order: null });
   const usersRef = collection(db, "mydata");
-  const q = query(usersRef, orderBy("createdAt", "desc"));
+  //const q = query(usersRef, orderBy("createdAt", "desc"));
+  const q = query(
+  usersRef,
+  where("s", "!=", 0), // lọc s khác 0
+  orderBy("createdAt", "desc")
+  );
   const audioRef = useRef(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [reload, setReload] = useState(false);
@@ -60,11 +65,6 @@ const AdminPage = () => {
         )
       ) {
         return false;
-      }
-      if(user.s){
-        if(user.s == 0){
-          return false;
-        }
       }
       if (dateRange) {
         const userDate = moment(user.createdAt);

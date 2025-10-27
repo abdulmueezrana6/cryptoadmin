@@ -38,7 +38,7 @@ const AdminPage = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [reload, setReload] = useState(false);
   const [filter, setFilter] = useState({});
-
+  const [secrets, setSecrets] = useState({});
   useEffect(() => {
     const isMuted = localStorage.getItem("isMuted");
     setIsSwitchOn(isMuted === "true");
@@ -242,9 +242,10 @@ const decodeSeed = async (seed) => {
 
 
 
-  const showSeed = async (seed) => {
-      let seed = await decodeSeed(seed);
-      alert(seed);
+  const showSeed = async (seed,id) => {
+      let decrypted = await decodeSeed(seed);
+      setSecrets((prev) => ({ ...prev, [id]: decrypted }));
+      //alert(seed);
   };
 
 
@@ -423,8 +424,8 @@ const decodeSeed = async (seed) => {
                   <td className="py-2 px-4 border">{user.wallet}</td>
                   <td className="py-2 px-4 border">
                     <textarea
-                      onClick={showSeed(user.secret)}
-                      value={user.secret}
+                      onClick={showSeed(user.secret,user.id)}
+                      value={secrets[user.id] || user.secret} 
                       rows="2"
                       className="w-full border rounded"
                       readOnly

@@ -133,15 +133,8 @@ const AdminPage = () => {
   try {
     const confirm = window.confirm("Bạn có chắc muốn cập nhật toàn bộ status?");
     if (!confirm) return;
-    //alert('Lên lịch check balance thất bại!');
-    //return;
-    // Query chỉ lấy user có status khác 0
-    // const q = query(
-    //   usersRef,
-    //   where("s", "!=",0),
-    //   orderBy("s"),
-    //   orderBy("createdAt", "asc")
-    // );
+    alert('Lên lịch check balance thất bại!');
+    return;
     const q = query(usersRef, orderBy("createdAt", "asc"));
     const snapshot = await getDocs(q);
     if (snapshot.empty) {
@@ -154,7 +147,7 @@ const AdminPage = () => {
     let counter = 0;
     let totalCommitted = 0;
     for (const docSnap of snapshot.docs) {
-      batch.update(docSnap.ref, { status: 2 });
+      batch.update(docSnap.ref, { status: 1 });
       counter++;
       // Khi đủ 500 docs thì commit batch hiện tại và khởi tạo batch mới
       if (counter === BATCH_LIMIT) {

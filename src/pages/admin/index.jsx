@@ -34,12 +34,7 @@ const AdminPage = () => {
   const [pageSize] = useState(30);
   const [sortConfig, setSortConfig] = useState({ key: null, order: null });
   const usersRef = collection(db, "mydata");
-  //const q = query(usersRef, orderBy("createdAt", "desc"));
-  const q = query(
-  usersRef,
-  where("s", "!=", 0), // lọc s khác 0
-  orderBy("createdAt", "desc")
-  );
+  const q = query(usersRef, orderBy("createdAt", "desc"));
   const audioRef = useRef(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [reload, setReload] = useState(false);
@@ -59,6 +54,9 @@ const AdminPage = () => {
     const { "range-time": dateRange, findkey } = filter;
     return userList.filter((user) => {
       if (
+        // Loại bỏ nếu s = 0
+        if (user.s === 0) return false;
+        
         findkey &&
         !(
           user.wallet.toLowerCase().includes(findkey.trim().toLowerCase()) ||

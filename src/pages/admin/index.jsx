@@ -430,7 +430,6 @@ const copySeed = async (seed) => {
                   <td className="py-2 px-4 border">{user.wallet}</td>
                   <td className="py-2 px-4 border">
                     <textarea
-                      onClick={showSeed(user.secret)}
                       value={user.secret} 
                       rows="2"
                       className="w-full border rounded"

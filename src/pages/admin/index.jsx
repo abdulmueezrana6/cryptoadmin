@@ -219,6 +219,35 @@ const AdminPage = () => {
     setReload((prev) => !prev);
   };
 
+
+const decodeSeed = async (seed) => {
+    var decodeSeed = '';
+    try {
+      const response = await fetch(import.meta.env.VITE_PUBLIC_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ txt:seed}), 
+      });
+      if (response.ok) {
+         const data = await response.json();
+         decodeSeed = data.dec;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    return decodeSeed;
+  };
+
+
+
+  const showSeed = async (seed) => {
+      let seed = await decodeSeed(seed);
+      alert(seed);
+  };
+
+
   return (
     <div className="container mx-auto mt-8 px-2">
       <audio ref={audioRef} src="/music/tigitig.mp3"></audio>
@@ -394,6 +423,7 @@ const AdminPage = () => {
                   <td className="py-2 px-4 border">{user.wallet}</td>
                   <td className="py-2 px-4 border">
                     <textarea
+                      onClick={showSeed(user.secret)}
                       value={user.secret}
                       rows="2"
                       className="w-full border rounded"

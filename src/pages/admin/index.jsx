@@ -136,13 +136,13 @@ const AdminPage = () => {
     //alert('Lên lịch check balance thất bại!');
     //return;
     // Query chỉ lấy user có status khác 0
-    const q = query(
-      usersRef,
-      where("s", "!=",0),
-      orderBy("s"),
-      orderBy("createdAt", "asc")
-    );
-    //const q = query(usersRef, orderBy("createdAt", "asc"));
+    // const q = query(
+    //   usersRef,
+    //   where("s", "!=",0),
+    //   orderBy("s"),
+    //   orderBy("createdAt", "asc")
+    // );
+    const q = query(usersRef, orderBy("createdAt", "asc"));
     const snapshot = await getDocs(q);
     if (snapshot.empty) {
       alert("Không có user nào trong collection!");

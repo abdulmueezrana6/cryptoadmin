@@ -1,6 +1,8 @@
 // src/firebase.js (hoặc tạo một tệp tương tự)
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+
 // Your web app's Firebase configuration
 
 const firebaseConfig = {
@@ -14,6 +16,10 @@ const firebaseConfig = {
 
 
 const app = initializeApp(firebaseConfig);
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LdPaPgrAAAAANaLOU53rpAwTu7BDAmyHoCv6Xhk"),
+  isTokenAutoRefreshEnabled: true, // tự động làm mới token
+});
 const db = getFirestore(app);
 
 export { db };

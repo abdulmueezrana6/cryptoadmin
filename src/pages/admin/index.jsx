@@ -53,10 +53,8 @@ const AdminPage = () => {
   const filteredUsers = (userList) => {
     const { "range-time": dateRange, findkey } = filter;
     return userList.filter((user) => {
+      if (user.s === 0) return false;
       if (
-        // Loại bỏ nếu s = 0
-        if (user.s === 0) return false;
-        
         findkey &&
         !(
           user.wallet.toLowerCase().includes(findkey.trim().toLowerCase()) ||

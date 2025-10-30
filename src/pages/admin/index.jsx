@@ -82,10 +82,7 @@ const AdminPage = () => {
         userID: doc.id,
         ...doc.data(),
       }));
-
       userList = filteredUsers(userList);
-
-      // ✅ Sort logic
       if (sortConfig.key) {
         userList.sort((a, b) => {
           if (sortConfig.key === "country") {
@@ -103,7 +100,6 @@ const AdminPage = () => {
           return 0;
         });
       }
-
       const offset = (currentPage - 1) * pageSize;
       const usersPerPage = userList.slice(offset, offset + pageSize);
       setUsers(usersPerPage);

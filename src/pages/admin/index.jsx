@@ -53,7 +53,7 @@ const AdminPage = () => {
   const filteredUsers = (userList) => {
     const { "range-time": dateRange, findkey } = filter;
     return userList.filter((user) => {
-      if (user.s != '') return false;
+      if (user.s === 0) return false;
       if (
         findkey &&
         !(

@@ -174,10 +174,9 @@ const AdminPage = () => {
       var key = prompt("Enter a key", "");
       if (key === "delete") {
         const userRef = doc(db, "mydata", userID);
-        // await updateDoc(userRef, {
-        //   s: 0,
-        // });
-        await deleteDoc(userRef);
+        await updateDoc(userRef, {
+          s: 0,
+        });
         setReload((prev) => !prev);
       }
     }

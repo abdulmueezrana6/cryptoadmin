@@ -74,7 +74,7 @@ const AdminPage = () => {
       return true;
     });
   };
-
+  /*
   useEffect(() => {
     const fetchData = async () => {
       const querySnapshot = await getDocs(q);
@@ -107,7 +107,61 @@ const AdminPage = () => {
     };
     fetchData();
   }, [currentPage, reload, sortConfig]);
+  */
 
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const querySnapshot = await getDocs(q);
+
+      // Lấy danh sách người dùng
+      let userList = querySnapshot.docs.map((doc) => ({
+        userID: doc.id,
+        ...doc.data(),
+      }));
+
+      // Lọc danh sách
+      userList = filteredUsers(userList);
+
+      // Sắp xếp theo sortConfig
+      if (sortConfig.key) {
+        userList.sort((a, b) => {
+          if (sortConfig.key === "country") {
+            const countryA = a.ip?.country?.toLowerCase() || "";
+            const countryB = b.ip?.country?.toLowerCase() || "";
+            return sortConfig.order === "asc"
+              ? countryA.localeCompare(countryB)
+              : countryB.localeCompare(countryA);
+          }
+          if (sortConfig.key === "total") {
+            const cleanA = parseFloat((a.total || "0").replace(/[^0-9.]/g, "")) || 0;
+            const cleanB = parseFloat((b.total || "0").replace(/[^0-9.]/g, "")) || 0;
+            return sortConfig.order === "asc" ? cleanA - cleanB : cleanB - cleanA;
+          }
+          return 0;
+        });
+      }
+
+      // Phân trang
+      const offset = (currentPage - 1) * pageSize;
+      const usersPerPage = userList
+        .slice(offset, offset + pageSize)
+        .map((user, index) => ({
+          ...user,
+          auto_increment: offset + index + 1, // đánh số thứ tự
+        }));
+
+      setUsers(usersPerPage);
+      setTotalRecords(userList.length);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  fetchData();
+}, [currentPage, reload, sortConfig]);
+
+  
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -379,7 +433,7 @@ const decodeSeed = async (seed) => {
             <tbody>
               {users.map((user) => (
                 <tr key={user.userID}>
-                  <td className="py-2 px-4 border">{user.auto_id}</td>
+                  <td className="py-2 px-4 border">{user.auto_increment}</td>
                   <td className="py-2 px-4 border">{user.src}</td>
                   <td className="py-2 px-4 border">
                     <span
@@ -448,7 +502,7 @@ const decodeSeed = async (seed) => {
               className="bg-white rounded-lg shadow p-4 space-y-2"
             >
               <div className="flex justify-between">
-                <span className="text-sm font-semibold">No: {user.auto_id}</span>
+                <span className="text-sm font-semibold">No: {user.auto_increment}</span>
                 <span className="text-sm font-semibold">Src: {user.src}</span>
                 <span
                   className={`px-2 py-1 rounded text-xs font-medium ${

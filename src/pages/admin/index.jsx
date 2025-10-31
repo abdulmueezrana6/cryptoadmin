@@ -141,14 +141,12 @@ const AdminPage = () => {
           return 0;
         });
       }
-
-      // Phân trang
       const offset = (currentPage - 1) * pageSize;
       const usersPerPage = userList
         .slice(offset, offset + pageSize)
         .map((user, index) => ({
           ...user,
-          auto_increment: offset + index + 1, // đánh số thứ tự
+          auto_increment: userList.length - (offset + index),
         }));
 
       setUsers(usersPerPage);

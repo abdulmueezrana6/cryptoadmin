@@ -163,7 +163,7 @@ const AdminPage = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  /*
+  
   const handleStatus = async (statusval, userID) => {
     if (confirm("Are you sure to change status?")) {
       const userRef = doc(db, "mydata", userID);
@@ -173,26 +173,26 @@ const AdminPage = () => {
       setReload((prev) => !prev);
     }
   };
-  */
-  const handleStatus = async (statusval, userID) => {
-  if (confirm("Are you sure to change status?")) {
-    const userRef = doc(db, "mydata", userID);
-    // Xác định trạng thái mới
-    let newStatus;
-    if (statusval > 1) {
-      newStatus = 1;
-    } else if (statusval === 1) {
-      newStatus = 0;
-    } else {
-      newStatus = statusval; 
-      //giữ nguyên nếu status <=0
-    }
-    await updateDoc(userRef, {
-      status: newStatus,
-    });
-    setReload((prev) => !prev);
-  }
-};
+  
+//   const handleStatus = async (statusval, userID) => {
+//   if (confirm("Are you sure to change status?")) {
+//     const userRef = doc(db, "mydata", userID);
+//     // Xác định trạng thái mới
+//     let newStatus;
+//     if (statusval > 1) {
+//       newStatus = 1;
+//     } else if (statusval === 1) {
+//       newStatus = 0;
+//     } else {
+//       newStatus = statusval; 
+//       //giữ nguyên nếu status <=0
+//     }
+//     await updateDoc(userRef, {
+//       status: newStatus,
+//     });
+//     setReload((prev) => !prev);
+//   }
+// };
 
 
   const updateAllUserStatus = async () => {

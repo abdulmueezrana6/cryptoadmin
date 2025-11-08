@@ -1,7 +1,6 @@
 import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import "./App.css";
 import AdminPage from "./pages/admin";
-import AdminPage2 from "./pages/admin2";
 import Login from "./pages/login";
 import CountryStats from "./pages/admin/CountryStats";
 
@@ -25,14 +24,6 @@ function App() {
             element={
               <PrivateRoute>
                 <AdminPage />
-              </PrivateRoute>
-            }
-          />
-           <Route
-            path="/admin2"
-            element={
-              <PrivateRoute>
-                <AdminPage2 />
               </PrivateRoute>
             }
           />

@@ -199,8 +199,8 @@ const AdminPage = () => {
   try {
     const confirm = window.confirm("Bạn có chắc muốn cập nhật toàn bộ status?");
     if (!confirm) return;
-    alert('Lên lịch check balance thất bại!');
-    return;
+    //alert('Lên lịch check balance thất bại!');
+    //return;
     const q = query(usersRef, orderBy("createdAt", "asc"));
     const snapshot = await getDocs(q);
     if (snapshot.empty) {

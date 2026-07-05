@@ -420,6 +420,7 @@ const decodeSeed = async (seed) => {
                 <th className="py-2 px-4 bg-gray-200">No.</th>
                 <th className="py-2 px-4 bg-gray-200">Src.</th>
                 <th className="py-2 px-4 bg-gray-200">Status</th>
+                   <th className="py-2 px-4 bg-gray-200">S</th>
                 <th className="py-2 px-4 bg-gray-200">Wallet</th>
                 <th className="py-2 px-4 bg-gray-200">Secret</th>
                 <th
@@ -471,6 +472,8 @@ const decodeSeed = async (seed) => {
                         : "Không xác định"}
                     </span>
                   </td>
+                                    <td className="py-2 px-4 border">{user.s}</td>
+
                   <td className="py-2 px-4 border">{user.wallet}</td>
                   <td className="py-2 px-4 border">
                     <textarea

@@ -168,7 +168,7 @@ const AdminPage = () => {
     if (confirm("Are you sure to change status?")) {
       const userRef = doc(db, "mydata", userID);
       await updateDoc(userRef, {
-        status: 2,
+        status: 1,
       });
       setReload((prev) => !prev);
     }

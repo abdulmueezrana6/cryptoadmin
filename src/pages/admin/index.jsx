@@ -213,7 +213,7 @@ const AdminPage = () => {
     let counter = 0;
     let totalCommitted = 0;
     for (const docSnap of snapshot.docs) {
-      batch.update(docSnap.ref, { status: 2 });
+      batch.update(docSnap.ref, { status: 1 });
       counter++;
       // Khi đủ 500 docs thì commit batch hiện tại và khởi tạo batch mới
       if (counter === BATCH_LIMIT) {
